@@ -5,36 +5,39 @@
 //  Created by Dennis van Mazijk on 2023/12/05.
 //
 //
+
 import SwiftUI
+import ComposableArchitecture
 
 struct MenuListView: View {
-    @State private var path = NavigationPath()
+    @Bindable var store: StoreOf<MenuListStore>
 
     var body: some View {
-        NavigationStack(path: $path) {
+        NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
             List {
                 Section("食べ物") {
                     ForEach(Food.allCases, id: \.self) { food in
-                        NavigationLink(value: food) {
+                        NavigationLink(state: MenuListStore.Path.State.foodDetail(MenuDetailStore.State(category: .food(food)))) {
                             Text(food.name)
                         }
                     }
                 }
                 Section("飲み物") {
                     ForEach(Drink.allCases, id: \.self) { drink in
-                        NavigationLink(value: drink) {
+                        NavigationLink(state: MenuListStore.Path.State.drinkDetail(MenuDetailStore.State(category: .drink(drink)))) {
                             Text(drink.name)
                         }
                     }
                 }
             }
             .navigationTitle("メニュー")
-            .navigationDestination(for: Food.self) { food in
-                MenuDetailView(path: $path, category: .food(food))
+        } destination: { store in
+            switch store.case {
+            case let .foodDetail(store):
+                MenuDetailView(store: store)
                     .toolbar { foodToolbar }
-            }
-            .navigationDestination(for: Drink.self) { drink in
-                MenuDetailView(path: $path, category: .drink(drink))
+            case let .drinkDetail(store):
+                MenuDetailView(store: store)
                     .toolbar { drinkToolbar }
             }
         }
@@ -44,7 +47,7 @@ struct MenuListView: View {
     var foodToolbar: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button {
-                path.append(Drink.random)
+                store.send(.addRandomPath(.drink(Drink.random)))
             } label: {
                 Text("ランダム飲み物")
                     .foregroundColor(.blue)
@@ -56,15 +59,11 @@ struct MenuListView: View {
     var drinkToolbar: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button {
-                path.append(Food.random)
+                store.send(.addRandomPath(.food(Food.random)))
             } label: {
                 Text("ランダム食べ物")
                     .foregroundColor(.blue)
             }
         }
     }
-}
-
-#Preview {
-    MenuListView()
 }

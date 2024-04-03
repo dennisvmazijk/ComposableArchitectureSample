@@ -6,20 +6,22 @@
 //
 
 import SwiftUI
+import ComposableArchitecture
 
 struct MenuDetailView: View {
-    @Binding var path: NavigationPath
-
-    var category: Category
+    @Bindable var store: StoreOf<MenuDetailStore>
 
     var body: some View {
         VStack {
-            Image(category.image)
+            Image(store.category.image)
 
             VStack(spacing: 12) {
                 NavigationLink {
-                    Text("\(category.calories) kcal")
+                    Text("\(store.category.calories) kcal")
                         .font(.system(size: 75))
+                        .onAppear {
+                            store.send(.caloriesTapped(store.category))
+                        }
                 } label: {
                     Text("カロリー")
                 }
@@ -28,7 +30,7 @@ struct MenuDetailView: View {
                 .cornerRadius(12)
 
                 Button {
-                    path.removeLast(path.count)
+                    store.send(.goToRoot)
                 } label: {
                     Text("一覧に戻る")
                 }
@@ -38,6 +40,6 @@ struct MenuDetailView: View {
             }
             .padding()
         }
-        .navigationTitle(category.title)
+        .navigationTitle(store.category.title)
     }
 }

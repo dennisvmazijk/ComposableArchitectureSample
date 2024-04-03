@@ -6,12 +6,14 @@
 //
 
 import SwiftUI
+import ComposableArchitecture
 
 @main
 struct ComposableArchitectureSampleApp: App {
     var body: some Scene {
         WindowGroup {
-            MenuListView()
+            MenuListView(store: Store(initialState: MenuListStore.State(),
+                                      reducer: { MenuListStore() }))
         }
     }
 }
