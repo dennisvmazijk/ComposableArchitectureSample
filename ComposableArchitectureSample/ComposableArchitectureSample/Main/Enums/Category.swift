@@ -29,7 +29,7 @@ enum Category: Hashable {
         }
     }
 
-    var calories: String {
+    var calories: Int {
         switch self {
         case .food(let food):
             return food.calories

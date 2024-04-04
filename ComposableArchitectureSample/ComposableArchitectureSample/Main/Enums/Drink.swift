@@ -33,12 +33,12 @@ enum Drink: CaseIterable {
         }
     }
 
-    var calories: String {
+    var calories: Int {
         switch self {
         case .coffee:
-            return "10"
+            return 10
         case .juice:
-            return "120"
+            return 120
         }
     }
 }

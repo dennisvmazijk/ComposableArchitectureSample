@@ -35,8 +35,11 @@ struct MenuListStore {
             case .path(.element(_, action: .drinkDetail(.goToRoot))):
                 state.path.removeLast(state.path.count)
                 return .none
-            case .path(.element(_, action: .drinkDetail(.caloriesTapped(let category)))):
-                print("Calories:", category.calories)
+            case .path(.element(_, action: .foodDetail(.caloriesTapped(let category)))):
+                if category.calories > 350 {
+                    print("Food:", category.title)
+                    print("Calories:", category.calories)
+                }
                 return .none
             case let .addRandomPath(category):
                 switch category {
